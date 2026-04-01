@@ -1,0 +1,50 @@
+# ⚡ UV Quick-Start Cheatsheet
+
+`uv` is the fastest unified Python package, project, and tool manager.
+
+---
+
+## 🛠 Essential Commands
+
+| Command | Action |
+| :--- | :--- |
+| `uv init` | Create new project |
+| `uv venv` | Create virtual environment |
+| `source .venv/bin/activate` | Activate (macOS) |
+| `uv add <pkg>` | Install and save package |
+| `uv remove <pkg>` | Uninstall package |
+| `uv sync` | Install all from `pyproject.toml` |
+| `uv run <file.py>` | Run script with auto-env |
+| `uv python install 3.12` | Install Python version |
+
+---
+
+## 🏗 Common Workflows
+
+### 1. New Project (Recommended)
+```bash
+uv init my-agent
+cd my-agent
+uv add openai-agents pydantic python-dotenv
+uv run main.py
+```
+
+### 2. Legacy Project (requirements.txt)
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+### 3. One-Off Execution (No Install)
+```bash
+uv run --with requests,rich my_script.py
+```
+
+---
+
+## 💡 Key Performance Tip
+Use `uv run` instead of `python` directly; it automatically manages the environment and caches for maximum speed.
+
+---
+*Antigravity AI Agent SDK Support*
