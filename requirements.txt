@@ -1,4 +1,0 @@
-openai-agents
-pydantic
-python-dotenv
-asyncio
