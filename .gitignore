@@ -44,5 +44,27 @@ env/
 .coverage
 htmlcov/
 
-# Logs
-*.log
+# Logs (keep README.md)
+logs/*.log
+logs/*.log.*
+!logs/README.md
+
+# Data files (keep README.md)
+data/*.json
+data/*.db
+data/*.sqlite
+data/cache/
+data/backup/
+!data/README.md
+
+# Generated files
+*.pyc
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
