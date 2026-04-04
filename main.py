@@ -1,15 +1,20 @@
 import asyncio
+import os
 from openai import AsyncOpenAI
 from agents import Runner, OpenAIChatCompletionsModel, set_tracing_disabled
 from agents_config import setup_workforce
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Disable cloud tracing for local development
 set_tracing_disabled(True)
 
-# Connect to local Ollama server
+# Connect to local Ollama server with env variables
 client = AsyncOpenAI(
-    base_url="http://localhost:11434/v1",
-    api_key="ollama",  # Dummy key for Ollama
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
+    api_key=os.getenv("OLLAMA_API_KEY", "ollama"),  # Dummy key for Ollama
 )
 
 # ✅ Using your perfectly working model: llama3.2:3b
