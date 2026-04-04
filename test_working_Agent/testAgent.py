@@ -1,3 +1,6 @@
+# This file contains a comprehensive test suite for the Agent system, demonstrating various features such as tools, handoffs, guardrails, structured output, sessions (memory), and tracing. It uses a local Ollama instance with the llama3.2:3b model for testing.
+# To run this test, ensure you have Ollama installed and running with the llama3.2:3b model pulled. You can start Ollama with `ollama serve` and pull the model with `ollama pull llama3.2:3b`.
+# it run locally and test the agent system with various scenarios, showcasing the capabilities of the Agent SDK in a controlled environment.
 import asyncio
 from typing import List
 from pydantic import BaseModel

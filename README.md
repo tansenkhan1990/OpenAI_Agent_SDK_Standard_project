@@ -49,3 +49,12 @@ python main.py
 
 **What to expect:**
 The script simulates a user asking for a refund. The `triage_agent` will receive the request, hand it off to the `billing_agent` which will use the mock database tools to process the refund. Finally, the system will output a structured JSON-like response containing the summary and transaction status. If any guardrails are tripped during execution, the system will actively block the completion.
+
+*** Now this model is running with local model with llama3.2:3b model of OLLAMA
+### This project now using OLLAMA
+### Install OLLAMA
+### ollama serve `to start the ollama and you must start this to access belows services`
+### ollama pull llama3.2:3b `to install a model`
+### ollama run llama3.2:3b `to run this model`
+### ollama rm llama3.2:3b `to remove this model`
+### ollama list `to see all the model`

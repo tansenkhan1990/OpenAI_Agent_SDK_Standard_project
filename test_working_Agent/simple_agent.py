@@ -1,3 +1,5 @@
+# this is a simple Agent perfectly working 
+# It run with Open Router key where model is loading from cloud
 import asyncio
 import os
 from openai import AsyncOpenAI
