@@ -9,12 +9,9 @@ import logging
 from src.utils.logger import setup_logging
 from src.models.responses import QueryKnowledgeBaseInput, UpdateRecordInput
 from src.utils.constants import KNOWLEDGE_BASE
+from src.services.database import get_database
 
 logger = setup_logging(__name__)
-
-
-# In-memory database (can be replaced with actual DB)
-_mock_records: Dict[str, str] = {}
 
 
 @function_tool
@@ -62,9 +59,10 @@ def query_knowledge_base(topic: str) -> str:
 def update_record(record_id: str, status: str) -> str:
     """
     Update system records with new status.
+    Uses JSON database for persistent storage.
     
     Args:
-        record_id: ID of the record to update
+        record_id: ID of the record to update (ticket or order)
         status: New status value
         
     Returns:
@@ -82,8 +80,20 @@ def update_record(record_id: str, status: str) -> str:
         validated_input = UpdateRecordInput(record_id=record_id, status=status)
         logger.debug(f"Updating record: {validated_input.record_id} to {validated_input.status}")
         
-        # Update mock database
-        _mock_records[validated_input.record_id] = validated_input.status
+        # Get database instance
+        db = get_database()
+        
+        # Try to update ticket first, then record
+        ticket_updated = db.update_ticket(validated_input.record_id, {"status": validated_input.status})
+        
+        if not ticket_updated:
+            # Try updating as a record
+            record_updated = db.update_record(validated_input.record_id, {"status": validated_input.status})
+            
+            if not record_updated:
+                error_msg = f"Record not found: {validated_input.record_id}"
+                logger.warning(error_msg)
+                return f"ERROR: {error_msg}"
         
         success_msg = f"SUCCESS: Record {validated_input.record_id} has been updated to status: {validated_input.status}."
         logger.info(success_msg)
@@ -102,7 +112,8 @@ def update_record(record_id: str, status: str) -> str:
 
 def get_record_status(record_id: str) -> str:
     """
-    Get the current status of a record (helper function, not a tool).
+    Get the current status of a record or ticket.
+    Helper function, not a tool.
     
     Args:
         record_id: ID of the record to check
@@ -110,11 +121,34 @@ def get_record_status(record_id: str) -> str:
     Returns:
         Current status or "Not found" message
     """
-    return _mock_records.get(record_id, "Record not found")
+    try:
+        db = get_database()
+        
+        # Try ticket first
+        ticket = db.get_ticket(record_id)
+        if ticket:
+            return ticket.get("status", "Unknown")
+        
+        # Try record
+        record = db.get_record(record_id)
+        if record:
+            return record.get("status", "Unknown")
+        
+        return "Record not found"
+        
+    except Exception as e:
+        logger.error(f"Error getting record status: {e}")
+        return "Error retrieving status"
 
 
-def clear_mock_db() -> None:
-    """Clear the mock database (useful for testing)."""
-    global _mock_records
-    _mock_records.clear()
-    logger.debug("Mock database cleared")
+def clear_database() -> None:
+    """
+    Clear the database (useful for testing).
+    Only use in testing environments!
+    """
+    try:
+        db = get_database()
+        db.clear_database()
+        logger.debug("Database cleared")
+    except Exception as e:
+        logger.error(f"Error clearing database: {e}")

@@ -8,7 +8,7 @@ from src.tools.knowledge_base import (
     query_knowledge_base,
     update_record,
     get_record_status,
-    clear_mock_db,
+    clear_database,
 )
 
 
@@ -43,8 +43,8 @@ class TestUpdateRecord:
     """Tests for update_record tool."""
     
     def setup_method(self):
-        """Clear mock DB before each test."""
-        clear_mock_db()
+        """Clear database before each test."""
+        clear_database()
     
     def test_valid_update(self):
         """Test updating a record."""
@@ -53,21 +53,29 @@ class TestUpdateRecord:
         assert "ticket-001" in result
     
     def test_update_creates_record(self):
-        """Test that update creates new record in DB."""
-        update_record("ticket-002", "In-Progress")
-        status = get_record_status("ticket-002")
+        """Test that update modifies existing record in DB."""
+        # ticket-001 should exist in database
+        result = update_record("ticket-001", "In-Progress")
+        assert "SUCCESS" in result
+        
+        # Verify status was updated
+        status = get_record_status("ticket-001")
         assert status == "In-Progress"
     
     def test_update_overwrites_status(self):
         """Test that updating overwrites previous status."""
-        update_record("ticket-003", "In-Progress")
-        update_record("ticket-003", "Resolved")
-        status = get_record_status("ticket-003")
+        update_record("ticket-002", "Escalated")
+        status = get_record_status("ticket-002")
+        assert status == "Escalated"
+        
+        # Update again
+        update_record("ticket-002", "Resolved")
+        status = get_record_status("ticket-002")
         assert status == "Resolved"
     
     def teardown_method(self):
         """Clean up after tests."""
-        clear_mock_db()
+        clear_database()
 
 
 if __name__ == "__main__":
